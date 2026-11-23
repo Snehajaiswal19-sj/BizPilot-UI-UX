@@ -1,8 +1,17 @@
 
 import { useState } from "react";
 import {
-  ArrowLeft, ArrowRight, Eye, EyeOff, Mail, Lock,
-  UserRound, Building2, CheckCircle2, Sparkles
+  ArrowLeft,
+  ArrowRight,
+  Eye,
+  EyeOff,
+  Mail,
+  Lock,
+  UserRound,
+  Building2,
+  CheckCircle2,
+  Sparkles,
+  ShieldCheck
 } from "lucide-react";
 import "./Auth.css";
 
@@ -28,6 +37,7 @@ function Auth({ onBack, onSuccess, onRegister }) {
       ...previous,
       [event.target.name]: event.target.value
     }));
+
     setError("");
     setSuccess("");
   }
@@ -36,10 +46,13 @@ function Auth({ onBack, onSuccess, onRegister }) {
     setMode(nextMode);
     setError("");
     setSuccess("");
+    setShowPassword(false);
+    setShowConfirmPassword(false);
   }
 
   function handleSubmit(event) {
     event.preventDefault();
+
     setError("");
     setSuccess("");
 
@@ -69,87 +82,102 @@ function Auth({ onBack, onSuccess, onRegister }) {
         business: form.business,
         email: form.email
       });
+
       return;
     }
 
-    if (form.password.length < 1) {
-      setError("Please enter your password.");
-      return;
-    }
-
-    // Demo-only login. This does not verify a real account.
     onSuccess?.();
+  }
+
+  function handleForgotPassword() {
+    setError(
+      "Password recovery will be available after authentication setup."
+    );
   }
 
   return (
     <main className="auth-page">
-      <div className="auth-background-glow auth-glow-one" />
-      <div className="auth-background-glow auth-glow-two" />
-      <div className="auth-grain" />
 
-      <button className="auth-back-button" onClick={onBack}>
+      {/* Background atmosphere */}
+
+      <div className="auth-background">
+        <div className="auth-background-glow auth-glow-one" />
+        <div className="auth-background-glow auth-glow-two" />
+        <div className="auth-background-glow auth-glow-three" />
+
+        <div className="auth-background-orb auth-orb-one" />
+        <div className="auth-background-orb auth-orb-two" />
+
+        <div className="auth-grain" />
+        <div className="auth-background-grid" />
+      </div>
+
+      {/* Back navigation */}
+
+      <button
+        type="button"
+        className="auth-back-button"
+        onClick={onBack}
+      >
         <ArrowLeft size={15} />
-        Back to website
+        <span>Back to website</span>
       </button>
 
+      {/* Centered authentication layout */}
+
       <div className="auth-layout">
-        <section className="auth-brand-panel">
-          <div className="auth-brand">
-            <span className="auth-brand-mark">B</span>
-            <span>bizpilot<span className="auth-brand-dot">.</span></span>
-          </div>
-
-          <div className="auth-brand-content">
-            <span className="auth-overline">
-              <Sparkles size={13} /> BUSINESS MANAGEMENT, REIMAGINED
-            </span>
-
-            <h1>
-              Your business.
-              <br />
-              <span>In better hands.</span>
-            </h1>
-
-            <p>
-              Bring your sales, inventory, customers and business
-              insights together in one beautifully organised workspace.
-            </p>
-
-            <div className="auth-feature-list">
-              <div><CheckCircle2 size={16} /> One place for everyday operations</div>
-              <div><CheckCircle2 size={16} /> Clear insights into your business</div>
-              <div><CheckCircle2 size={16} /> Simple tools that work together</div>
-            </div>
-          </div>
-
-          <div className="auth-brand-footer">
-            <span>BUILT FOR BUSINESSES THAT MOVE FORWARD</span>
-            <span>© 2026 BizPilot</span>
-          </div>
-        </section>
 
         <section className="auth-form-side">
-          <div className="auth-mobile-brand">
-            <span className="auth-brand-mark">B</span>
-            <span>bizpilot<span className="auth-brand-dot">.</span></span>
-          </div>
 
           <div className="auth-form-card">
+
+            {/* Brand */}
+
+            <div className="auth-card-brand">
+              <div className="auth-brand-mark">
+                B
+              </div>
+
+              <div className="auth-brand-name">
+                bizpilot<span>.</span>
+              </div>
+
+              <div className="auth-brand-caption">
+                BUSINESS MANAGEMENT, SIMPLIFIED
+              </div>
+            </div>
+
+            {/* Heading */}
+
             <div className="auth-form-heading">
+
               <span className="auth-overline">
-                {isRegister ? "GET STARTED WITH BIZPILOT" : "WELCOME BACK"}
+                <Sparkles size={13} />
+
+                {isRegister
+                  ? "YOUR BUSINESS JOURNEY STARTS HERE"
+                  : "WELCOME BACK"}
               </span>
 
-              <h2>{isRegister ? "Create your account." : "Good to see you."}</h2>
+              <h1>
+                {isRegister
+                  ? "Create your account"
+                  : "Welcome back"}
+                <span>.</span>
+              </h1>
 
               <p>
                 {isRegister
-                  ? "Set up your account and bring your business into focus."
-                  : "Sign in to continue managing your business."}
+                  ? "Set up your account and bring everything your business needs into one place."
+                  : "Sign in to your account and stay on top of your business."}
               </p>
+
             </div>
 
+            {/* Login / Signup switch */}
+
             <div className="auth-mode-switch">
+
               <button
                 type="button"
                 className={!isRegister ? "active" : ""}
@@ -157,6 +185,7 @@ function Auth({ onBack, onSuccess, onRegister }) {
               >
                 Sign in
               </button>
+
               <button
                 type="button"
                 className={isRegister ? "active" : ""}
@@ -164,45 +193,77 @@ function Auth({ onBack, onSuccess, onRegister }) {
               >
                 Create account
               </button>
+
             </div>
 
-            <form className="auth-form" onSubmit={handleSubmit}>
+            {/* Authentication form */}
+
+            <form
+              className="auth-form"
+              onSubmit={handleSubmit}
+            >
+
               {isRegister && (
                 <>
+
                   <label className="auth-field">
-                    Full name
+
+                    <span className="auth-field-label">
+                      Full name
+                    </span>
+
                     <span className="auth-input-wrap">
-                      <UserRound size={16} />
+                      <UserRound size={17} />
+
                       <input
                         name="name"
+                        type="text"
                         value={form.name}
                         onChange={updateField}
                         placeholder="Enter your full name"
                         autoComplete="name"
+                        required
                       />
                     </span>
+
                   </label>
 
                   <label className="auth-field">
-                    Business name
+
+                    <span className="auth-field-label">
+                      Business name
+                    </span>
+
                     <span className="auth-input-wrap">
-                      <Building2 size={16} />
+                      <Building2 size={17} />
+
                       <input
                         name="business"
+                        type="text"
                         value={form.business}
                         onChange={updateField}
                         placeholder="Enter your business name"
                         autoComplete="organization"
+                        required
                       />
                     </span>
+
                   </label>
+
                 </>
               )}
 
+              {/* Email */}
+
               <label className="auth-field">
-                Email address
+
+                <span className="auth-field-label">
+                  Email address
+                </span>
+
                 <span className="auth-input-wrap">
-                  <Mail size={16} />
+                  <Mail size={17} />
+
                   <input
                     name="email"
                     type="email"
@@ -213,97 +274,210 @@ function Auth({ onBack, onSuccess, onRegister }) {
                     required
                   />
                 </span>
+
               </label>
 
+              {/* Password */}
+
               <label className="auth-field">
-                Password
+
+                <span className="auth-field-label">
+                  Password
+                </span>
+
                 <span className="auth-input-wrap">
-                  <Lock size={16} />
+                  <Lock size={17} />
+
                   <input
                     name="password"
                     type={showPassword ? "text" : "password"}
                     value={form.password}
                     onChange={updateField}
-                    placeholder={isRegister ? "At least 8 characters" : "Enter your password"}
-                    autoComplete={isRegister ? "new-password" : "current-password"}
+                    placeholder={
+                      isRegister
+                        ? "At least 8 characters"
+                        : "Enter your password"
+                    }
+                    autoComplete={
+                      isRegister
+                        ? "new-password"
+                        : "current-password"
+                    }
                     required
                   />
+
                   <button
                     type="button"
                     className="auth-eye-button"
                     onClick={() => setShowPassword(!showPassword)}
-                    aria-label="Toggle password visibility"
+                    aria-label={
+                      showPassword
+                        ? "Hide password"
+                        : "Show password"
+                    }
                   >
-                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    {showPassword
+                      ? <EyeOff size={17} />
+                      : <Eye size={17} />}
                   </button>
+
                 </span>
+
               </label>
+
+              {/* Remember me / Forgot password */}
 
               {!isRegister && (
                 <div className="auth-form-options">
+
                   <label className="auth-remember">
                     <input type="checkbox" />
+
                     <span>Remember me</span>
                   </label>
+
                   <button
                     type="button"
                     className="auth-text-button"
-                    onClick={() => setError("Password recovery will be available after authentication setup.")}
+                    onClick={handleForgotPassword}
                   >
                     Forgot password?
                   </button>
+
                 </div>
               )}
 
+              {/* Confirm password */}
+
               {isRegister && (
                 <label className="auth-field">
-                  Confirm password
+
+                  <span className="auth-field-label">
+                    Confirm password
+                  </span>
+
                   <span className="auth-input-wrap">
-                    <Lock size={16} />
+                    <Lock size={17} />
+
                     <input
                       name="confirmPassword"
-                      type={showConfirmPassword ? "text" : "password"}
+                      type={
+                        showConfirmPassword
+                          ? "text"
+                          : "password"
+                      }
                       value={form.confirmPassword}
                       onChange={updateField}
                       placeholder="Re-enter your password"
                       autoComplete="new-password"
                       required
                     />
+
                     <button
                       type="button"
                       className="auth-eye-button"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      aria-label="Toggle confirm password visibility"
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
+                      aria-label={
+                        showConfirmPassword
+                          ? "Hide confirm password"
+                          : "Show confirm password"
+                      }
                     >
-                      {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                      {showConfirmPassword
+                        ? <EyeOff size={17} />
+                        : <Eye size={17} />}
                     </button>
+
                   </span>
+
                 </label>
               )}
 
-              {error && <p className="auth-message auth-error">{error}</p>}
-              {success && <p className="auth-message auth-success">{success}</p>}
+              {/* Error / Success */}
 
-              <button type="submit" className="auth-submit-button">
-                {isRegister ? "Create my account" : "Sign in to BizPilot"}
-                <ArrowRight size={16} />
+              {error && (
+                <p
+                  className="auth-message auth-error"
+                  role="alert"
+                >
+                  {error}
+                </p>
+              )}
+
+              {success && (
+                <p
+                  className="auth-message auth-success"
+                  role="status"
+                >
+                  {success}
+                </p>
+              )}
+
+              {/* Submit */}
+
+              <button
+                type="submit"
+                className="auth-submit-button"
+              >
+
+                <span>
+                  {isRegister
+                    ? "Create my account"
+                    : "Sign in to BizPilot"}
+                </span>
+
+                <ArrowRight size={17} />
+
               </button>
+
             </form>
 
+            {/* Switch login / signup */}
+
             <p className="auth-switch-text">
-              {isRegister ? "Already have an account?" : "New to BizPilot?"}
-              <button onClick={() => switchMode(isRegister ? "login" : "register")}>
-                {isRegister ? "Sign in" : "Create an account"}
+
+              {isRegister
+                ? "Already have an account?"
+                : "New to BizPilot?"}
+
+              <button
+                type="button"
+                onClick={() =>
+                  switchMode(isRegister ? "login" : "register")
+                }
+              >
+                {isRegister
+                  ? "Sign in"
+                  : "Create an account"}
               </button>
+
             </p>
 
+            {/* Security footer */}
+
             <div className="auth-security-note">
-              <Lock size={12} />
-              <span>Your business workspace, all in one place.</span>
+              <ShieldCheck size={15} />
+
+              <span>
+                Built for businesses that move forward.
+              </span>
             </div>
+
           </div>
+
+          {/* Page footer */}
+
+          <div className="auth-page-footer">
+            <span>© 2026 BIZPILOT</span>
+            <span>BUSINESS MANAGEMENT, REIMAGINED</span>
+          </div>
+
         </section>
+
       </div>
+
     </main>
   );
 }
